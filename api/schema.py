@@ -1,10 +1,39 @@
 import graphene
 from graphene_django.types import DjangoObjectType
-from .models import Topic
+from .models import User, Topic
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene import relay
 from graphql_relay import from_global_id
 from graphql_jwt.decorators import login_required
+from django.contrib.auth import get_user_model
+import graphql_jwt
+
+
+class UserNode(DjangoObjectType):
+    class Meta:
+        model = User
+        filter_fields = {
+            'username': ['exact', 'icontains'],
+            'is_staff': ['exact']
+        }
+        interfaces = (relay.Node,)
+
+
+class UserCreateMutation(relay.ClientIDMutation):
+    class Input:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    user = graphene.Field(UserNode)
+
+    def mutate_and_get_payload(root, info, **input):
+        user = get_user_model()(
+            username=input.get('username'),
+        )
+        user.set_password(input.get('password'))
+        user.save()
+
+        return UserCreateMutation(user=user)
 
 
 class TopicNode(DjangoObjectType):
@@ -79,14 +108,29 @@ class TopicDeleteMutation(relay.ClientIDMutation):
 
 
 class Mutation(graphene.ObjectType):
+    create_user = UserCreateMutation.Field()
     create_topic = TopicCreateMutation.Field()
     update_topic = TopicUpdateMutation.Field()
     delete_topic = TopicDeleteMutation.Field()
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
 
 
 class Query(graphene.ObjectType):
+    user = graphene.Field(UserNode, id=graphene.NonNull(graphene.ID))
+    all_users = DjangoFilterConnectionField(UserNode)
     topic = graphene.Field(TopicNode, id=graphene.NonNull(graphene.ID))
     all_topics = DjangoFilterConnectionField(TopicNode)
+
+
+    @login_required
+    def resolve_user(self, info, **kwargs):
+        username = kwargs.get('username')
+        return get_user_model().objects.get(id=from_global_id(id)[1])
+    
+    @login_required
+    def resolve_all_users(self, info, **kwargs):
+        return get_user_model().objects.all()
+
 
     def resolve_topic(self, info, **kwargs):
         id = kwargs.get('id')
