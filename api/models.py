@@ -6,6 +6,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 class User(AbstractBaseUser, PermissionsMixin):
   username = models.CharField(max_length=100, unique=True)
 
+  USERNAME_FIELD = 'username'
+
   def __str__(self):
     return self.username
 
