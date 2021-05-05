@@ -69,6 +69,7 @@ class TopicCreateMutation(relay.ClientIDMutation):
 class TopicUpdateMutation(relay.ClientIDMutation):
     class Input:
         id = graphene.ID(required=True)
+        title = graphene.String(required=True)
         is_talking = graphene.Boolean(required=True)
         is_closed = graphene.Boolean(required=True)
 
