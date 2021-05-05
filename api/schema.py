@@ -113,6 +113,8 @@ class Mutation(graphene.ObjectType):
     update_topic = TopicUpdateMutation.Field()
     delete_topic = TopicDeleteMutation.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+
 
 
 class Query(graphene.ObjectType):
