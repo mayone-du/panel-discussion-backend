@@ -81,6 +81,7 @@ class TopicUpdateMutation(relay.ClientIDMutation):
         topic = Topic(
             id=from_global_id(input.get('id'))[1]
         )
+        topic.title = input.get('title')
         topic.is_talking = input.get('is_talking')
         topic.is_closed = input.get('is_closed')
 
