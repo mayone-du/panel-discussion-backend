@@ -24,8 +24,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
   username = models.CharField(max_length=100, unique=True)
   email = models.EmailField(blank=True, null=True)
-  first_name = models.CharField(max_length=50 ,blank=True, null=True)
-  last_name = models.CharField(max_length=50 ,blank=True, null=True)
+  first_name = models.CharField(max_length=50, blank=True, null=True)
+  last_name = models.CharField(max_length=50, blank=True, null=True)
   is_active = models.BooleanField(default=True)
   is_staff = models.BooleanField(default=False)
   objects = UserManager()
@@ -43,3 +43,8 @@ class Topic(models.Model):
 
   def __str__(self):
     return self.title
+
+class Comment(models.Model):
+  text = models.CharField(max_length=100)
+  nickname = models.CharField(max_length=15, blank=True, null=True)
+  created_at = models.DateTimeField(auto_now=True)

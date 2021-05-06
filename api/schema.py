@@ -1,6 +1,6 @@
 import graphene
 from graphene_django.types import DjangoObjectType
-from .models import User, Topic
+from .models import User, Topic, Comment
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene import relay
 from graphql_relay import from_global_id
@@ -109,11 +109,44 @@ class TopicDeleteMutation(relay.ClientIDMutation):
 
 
 
+class CommentNode(DjangoObjectType):
+    class Meta:
+        model = Comment
+        filter_fields = {
+            'text': ['exact', 'icontains'],
+            'nickname': ['exact', 'icontains'],
+            'created_at': ['exact', 'icontains']
+        }
+        interfaces = (relay.Node,)
+
+
+class CommentCreateMutation(relay.ClientIDMutation):
+    class Input:
+        text = graphene.String(required=True)
+        nickname = graphene.String(required=False)
+
+    comment = graphene.Field(CommentNode)
+
+    def mutate_and_get_payload(root, info, **input):
+
+        comment = Comment(
+            text=input.get('text'),
+            nickname=input.get('nickname')
+        )
+        comment.save()
+
+        return CommentCreateMutation(comment=comment)
+
+
+
+
+
 class Mutation(graphene.ObjectType):
     create_user = UserCreateMutation.Field()
     create_topic = TopicCreateMutation.Field()
     update_topic = TopicUpdateMutation.Field()
     delete_topic = TopicDeleteMutation.Field()
+    create_comment = CommentCreateMutation.Field()
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     refresh_token = graphql_jwt.Refresh.Field()
 
@@ -124,6 +157,8 @@ class Query(graphene.ObjectType):
     all_users = DjangoFilterConnectionField(UserNode)
     topic = graphene.Field(TopicNode, id=graphene.NonNull(graphene.ID))
     all_topics = DjangoFilterConnectionField(TopicNode)
+    comment = graphene.Field(CommentNode, id=graphene.NonNull(graphene.ID))
+    all_comments = DjangoFilterConnectionField(CommentNode)
 
 
     @login_required
@@ -143,3 +178,12 @@ class Query(graphene.ObjectType):
 
     def resolve_all_topics(self, info, **kwargs):
         return Topic.objects.all()
+
+
+    def resolve_comment(self, info, **kwargs):
+        id = kwargs.get('id')
+        if id is not None:
+            return Comment.objects.get(id=from_global_id(id)[1])
+
+    def resolve_all_comments(self, info, **kwargs):
+        return Comment.objects.all()

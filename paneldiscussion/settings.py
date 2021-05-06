@@ -30,6 +30,7 @@ DEBUG = config('DEBUG')
 
 
 ALLOWED_HOSTS = ["qin-paneldiscussion.herokuapp.com"]
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -71,6 +72,7 @@ GRAPHQL_JWT = {
 
 CORS_ORIGIN_WHITELIST = [
     "https://qin-paneldiscussion.vercel.app"
+    # "http://localhost:3000"
 ]
 
 
