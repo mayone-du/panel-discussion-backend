@@ -29,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG')
 
 
-ALLOWED_HOSTS = ["qin-paneldiscussion.vercel.app"]
+ALLOWED_HOSTS = ["qin-paneldiscussion.herokuapp.com"]
 
 
 # Application definition
