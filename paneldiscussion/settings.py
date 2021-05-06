@@ -70,8 +70,7 @@ GRAPHQL_JWT = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    # "http://localhost:3000",
-    "https://qin-paneldiscussion.vercel.app/"
+    "https://qin-paneldiscussion.vercel.app"
 ]
 
 
