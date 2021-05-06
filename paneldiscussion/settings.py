@@ -29,7 +29,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG')
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["qin-paneldiscussion.vercel.app"]
 
 
 # Application definition
@@ -71,7 +71,7 @@ GRAPHQL_JWT = {
 
 CORS_ORIGIN_WHITELIST = [
     # "http://localhost:3000",
-    "qin-paneldiscussion.vercel.app"
+    "https://qin-paneldiscussion.vercel.app/"
 ]
 
 
